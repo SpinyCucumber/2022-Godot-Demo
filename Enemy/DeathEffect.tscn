@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Enemy/death.wav" type="AudioStream" id=1]
+
+[sub_resource type="AudioStreamRandomPitch" id=1]
+audio_stream = ExtResource( 1 )
+random_pitch = 1.2
+
+[node name="DeathEffect" type="Node2D"]
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = SubResource( 1 )
+pitch_scale = 0.9
+autoplay = true
+
+[connection signal="finished" from="AudioStreamPlayer2D" to="." method="queue_free"]

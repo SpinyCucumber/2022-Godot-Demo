@@ -2,6 +2,8 @@ extends KinematicBody2D
 
 export var walk_speed = 60.0
 export var turn_rate = 0.04
+export var health = 10
+export (PackedScene) var death_effect
 
 onready var nav = $NavigationAgent2D
 
@@ -33,3 +35,15 @@ func _physics_process(delta):
 		# Move forward
 		var move = walk_speed * max(0.0, move_dir.dot(target_dir)) * move_dir
 		move_and_slide(move)
+
+func damage(amount):
+	health = max(0, health - amount)
+	if health == 0:
+		# Create death effect (add as sibling)
+		var effect = death_effect.instance()
+		effect.global_position = global_position
+		get_parent().add_child(effect)
+		queue_free()
+
+func attacked(amount):
+	damage(amount)

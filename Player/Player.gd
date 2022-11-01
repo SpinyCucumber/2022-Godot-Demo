@@ -12,9 +12,42 @@ const action_to_anim = {
 export var walk_speed = 100.0
 export var sprint_speed = 200.0
 
-onready var anim_player = $AnimationPlayer;
+onready var anim_player = $AnimationPlayer
+onready var equipment_node = $Equipment
+onready var sprite = $Sprite
 
 var curr_action = Action.IDLE;
+var equip_index = 0
+
+func get_equipment():
+	return equipment_node.get_children()
+
+func get_curr_equip():
+	return get_equipment()[equip_index]
+
+func change_equip(index):
+	if index == equip_index: return
+	# Unequip current equip
+	if get_curr_equip().has_method("unequip"):
+		get_curr_equip().unequip(self)
+	equip_index = index
+	# Equip new equip
+	if get_curr_equip().has_method("equip"):
+		get_curr_equip().equip(self)
+
+func cycle_equipment(d):
+	change_equip((equip_index + d) % get_equipment().size())
+
+func _input(event):
+	if event.is_action_pressed("cycle_equip_up"):
+		cycle_equipment(1)
+	if event.is_action_pressed("cycle_equip_down"):
+		cycle_equipment(-1)
+
+func _ready():
+	# Equip initial equip
+	if get_curr_equip().has_method("equip"):
+		get_curr_equip().equip(self)
 
 func _physics_process(delta):
 	# Update rotation
